@@ -1,0 +1,3 @@
+We provide sample programs to show how to sign an api request based on different programming languages.
+
+We use "user/info" as an example api path here. Please refer to AscendEx Pro Api doc for the correct api path for each of your request. And make sure timestamp is the same as specified in your request header.
