@@ -14,4 +14,4 @@ echo curl -X GET -i \
   -H "x-auth-key: $APIKEY" \
   -H "x-auth-signature: $SIGNATURE" \
   -H "x-auth-timestamp: $TIMESTAMP" \
-  https://ascendex.io/api/pro/v1/user/info
+  https://ascendex.com/api/pro/v1/user/info
