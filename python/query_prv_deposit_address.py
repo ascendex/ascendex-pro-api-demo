@@ -10,7 +10,7 @@ from util import *
 @click.command()
 @click.option("--config", type=str, default=None, help="path to the config file")
 @click.option("--asset", default='BTC', type=str)
-@click.option("--blockchain", type=int)
+@click.option("--blockchain", type=str)
 def run(config, asset, blockchain):
     cfg = load_config(get_config_or_default(config))['ascendex']
 
