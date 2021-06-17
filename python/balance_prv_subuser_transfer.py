@@ -10,7 +10,7 @@ from util import *
 @click.command()
 @click.option("--asset", type=str, default="USDT", help="asset to be transferred")
 @click.option("--amount", type=float, default=11,
-              help="amount to be transferred, will be rounded to 4th decimal places")
+              help="amount to be transferred")
 @click.option("--user_from", type=str, default="cash", help="user to transfer from")
 @click.option("--user_to", type=str, default="cash", help="user to transfer to")
 @click.option("--ac_from", type=str, default="cash", help="account to transfer from")
