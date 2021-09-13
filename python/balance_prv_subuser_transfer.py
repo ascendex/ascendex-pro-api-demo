@@ -15,8 +15,9 @@ from util import *
 @click.option("--user_to", type=str, default="cash", help="user to transfer to")
 @click.option("--ac_from", type=str, default="cash", help="account to transfer from")
 @click.option("--ac_to", type=str, default="cash", help="account to transfer to")
+@click.option("--ack_mode", type=str, default="ack", help="ack/accept mode")
 @click.option("--config", type=str, default="config.json", help="path to the config file")
-def run(asset, amount, user_from, user_to, ac_from, ac_to, config):
+def run(asset, amount, user_from, user_to, ac_from, ac_to, ack_mode,config):
     if config is None:
         config = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "config.json")
         print(f"Config file is not specified, use {config}")
@@ -36,6 +37,7 @@ def run(asset, amount, user_from, user_to, ac_from, ac_to, config):
         acTo=ac_to,
         asset=asset,
         amount=amount,
+	mode=ack_mode,
     )
     pprint(json)
 
