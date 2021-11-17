@@ -42,7 +42,7 @@ class OrderBook(object):
 
 def send(ws, msg):
     o = json.dumps(msg)
-    print(f"> {str(o)}")
+    print(f'> {o}')
     ws.send(o)
 
 
@@ -72,7 +72,7 @@ def sub_depth(ws):
 
 
 def req_depth_snapshot(ws):
-    req = dict(op="req", action=f"depth-snapshot", args=dict(symbol=ws.symbol))
+    req = dict(op="req", action='depth-snapshot', args=dict(symbol=ws.symbol))
     send(ws, req)
 
 
@@ -112,7 +112,7 @@ def on_open(ws, duration, prefix):
 
         req_depth_snapshot(ws)
 
-        for i in range(duration):
+        for _ in range(duration):
             sleep(1)
             bids = ws.orderbook.bids
             asks = ws.orderbook.asks
