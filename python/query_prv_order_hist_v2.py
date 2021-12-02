@@ -23,10 +23,11 @@ def run(account, symbol, start_time, end_time, seq_num, limit, config, verbose):
     apikey = ascdex_cfg['apikey']
     secret = ascdex_cfg['secret']
 
-    url = f"{host}/{group}/{ROUTE_PREFIX_V2}/order/hist"
+    auth_method = 'data/v2/order/hist'
+    url = f"{host}/api/pro/data/v2/order/hist"
     
     ts = utc_timestamp()
-    headers = make_auth_headers(ts, "order/hist", apikey, secret)
+    headers = make_auth_headers(ts, auth_method, apikey, secret)
     params = dict(
         account = account,
         symbol = symbol,

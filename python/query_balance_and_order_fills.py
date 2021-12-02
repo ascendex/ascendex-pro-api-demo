@@ -10,10 +10,10 @@ from util import *
 @click.option("--account", type=click.Choice(['cash', 'margin', 'futures']), default="cash",
               help="cash, margin or futures")
 @click.option("--date", default=None, help="if date YYYY-mm-dd is not None, get snapshot")
-@click.option("--start_offset", default=None, help="if start_offset is not None, get history from start_offset")
-@click.option("--config", type=str, default="config_prod15.json", help="path to the config file")
+@click.option("--start_sn", default=sys.maxsize, help="if start_sn is not None, get history from start_sn")
+@click.option("--config", type=str, default="conf.json", help="path to the config file")
 @click.option("--verbose/--no-verbose", default=True)
-def run(account, date, start_offset, config, verbose):
+def run(account, date, start_sn, config, verbose):
 
     btmx_cfg = load_config(get_config_or_default(config))['bitmax']
 
@@ -25,9 +25,10 @@ def run(account, date, start_offset, config, verbose):
 
     ## get balannce snapshot
     if date is not None:
-        headers = make_auth_headers(ts, "balance/snapshot", apikey, secret)
-        url = f"{host}/api/pro/v1/data/balance/snapshot"
-        params = dict(account=account, date=date)
+        auth_method = f"data/v1/{account}/balance/snapshot"
+        headers = make_auth_headers(ts, auth_method, apikey, secret)
+        url = f"{host}/api/pro/data/v1/{account}/balance/snapshot"
+        params = dict(date=date)
 
         if verbose:
             print(f"Using url: {url}")
@@ -39,12 +40,16 @@ def run(account, date, start_offset, config, verbose):
         last_offset = json['meta']['sn']
         pprint(json)
         print(last_offset)
-    elif start_offset is not None:
-        next_offset = start_offset
+        # next with last_offset + 1 as 'start_sn' ('sn' in api request param) to call balance/history
+        # ......
+    elif start_sn is not None:
+        next_sn = start_sn
         ## query delta by
-        headers = make_auth_headers(ts, "balance/history", apikey, secret)
-        url = f"{host}/api/pro/v1/data/balance/history"
-        params = dict(account=account, startOffset=next_offset)
+
+        auth_method = f"data/v1/{account}/balance/history"
+        headers = make_auth_headers(ts, auth_method, apikey, secret)
+        url = f"{host}/api/pro/data/v1/{account}/balance/history"
+        params = dict(sn=next_sn, limit=10)
 
         if verbose:
             print(f"Using url: {url}")
