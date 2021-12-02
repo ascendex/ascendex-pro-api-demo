@@ -31,12 +31,11 @@ OrderInfo = collections.namedtuple('Order', ['symbol', 'px', 'qty', 'order_type'
 
 def get_message_topic(message):
     if 'm' in message:
-        topic = message['m']
+        return message['m']
     elif 'message' in message:
-        topic = message['message']
+        return message['message']
     else:
-        topic = None
-    return topic
+        return None
 
 
 class ClientProtocol(WebSocketClientProtocol):
@@ -62,7 +61,7 @@ class ClientProtocol(WebSocketClientProtocol):
             topic = get_message_topic(msg)
             if topic == 'error':
                 self.factory.on_error(msg['m'], msg.get('reason', ''))
-            elif topic == 'pong' or topic == 'sub' or topic == 'connected' or topic == 'unsub' or topic == 'auth':
+            elif topic in ['pong', 'sub', 'connected', 'unsub', 'auth']:
                 logging.debug(msg)
             else:
                 self.factory.on_message(msg)
@@ -204,7 +203,7 @@ class Client(WebSocketClientFactory):
             data = message['data']
         elif 'info' in message:
             data = message['info']
-        elif topic == 'bar' or topic == 'summary':
+        elif topic in ['bar', 'summary']:
             data = message
         else:
             logging.error(f"no data info: ${message}")
@@ -412,18 +411,14 @@ class Strategy(Subscriber):
             px = bbo_med
             qty = max(100 / px, 0.123)
             self.place_new_order(id, px, qty, 'limit', 'sell')
-        else:
-            if np.random.uniform() > 0.8:
-                px = bbo_med
-                qty = max(100 / px, 0.123)
-                order_type = np.random.choice(['market', 'limit'])
-                order_side = np.random.choice(['buy', 'sell'])
-                post_only = [True, False][np.random.choice([0, 1])]
-                if order_type == 'market':
-                    resp_inst = "DONE"
-                else:
-                    resp_inst = "ACK"
-                self.place_new_order(id, px, qty, order_type, order_side, post_only, resp_inst)
+        elif np.random.uniform() > 0.8:
+            px = bbo_med
+            qty = max(100 / px, 0.123)
+            order_type = np.random.choice(['market', 'limit'])
+            order_side = np.random.choice(['buy', 'sell'])
+            post_only = [True, False][np.random.choice([0, 1])]
+            resp_inst = "DONE" if order_type == 'market' else "ACK"
+            self.place_new_order(id, px, qty, order_type, order_side, post_only, resp_inst)
 
     def process_order(self, id, data):
         """ consuming order data """
@@ -437,7 +432,9 @@ class Strategy(Subscriber):
         """ consuming bar data """
         if data['intervalName'] == '1d':
             px_fields = ['openPrice', 'closePrice', 'highPrice', 'lowPrice']
-            self.avg_px[data['symbol']] = sum([float(data[px_field]) for px_field in px_fields]) / 4
+            self.avg_px[data['symbol']] = (
+                sum(float(data[px_field]) for px_field in px_fields) / 4
+            )
 
     def process_dummy(self, id, data):
         """ just drop data """
